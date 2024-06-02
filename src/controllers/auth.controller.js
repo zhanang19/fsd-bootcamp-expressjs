@@ -10,23 +10,6 @@ const jwt = require("jsonwebtoken");
 const register = async (req, res, next) => {
   const { name, email, password } = req.body;
 
-  if (!name || !email || !password) {
-    return res.send({
-      message: "Bad request",
-      data: null,
-    });
-  }
-
-  const emailCheck = await UserModel.findOne({
-    where: { email },
-  });
-  if (emailCheck) {
-    return res.status(400).send({
-      message: "Email already registered",
-      data: null,
-    });
-  }
-
   const passwordHash = await bcrypt.hash(password, 10);
   await UserModel.create({
     name,
@@ -58,13 +41,6 @@ const register = async (req, res, next) => {
  */
 const login = async (req, res, next) => {
   const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.send({
-      message: "Bad request",
-      data: null,
-    });
-  }
 
   await UserModel.findOne({
     attributes: ["id", "name", "email", "password"],
