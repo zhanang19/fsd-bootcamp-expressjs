@@ -1,46 +1,33 @@
-const knex = require("./knex");
-const user = require("./user");
-
-const TABLE_NAME = "posts";
-
-const getAllWithAuthor = async () => {
-  return knex({ p: TABLE_NAME })
-    .select(
-      "p.id",
-      "p.title",
-      "p.content",
-      "p.created_at",
-      "u.id as author_id",
-      "u.name as author_name"
-    )
-    .join({ u: user.tableName }, "p.user_id", "=", "u.id");
-};
-
-const findByIdWithAuthor = async (id) => {
-  return knex({ p: TABLE_NAME })
-    .select(
-      "p.id",
-      "p.title",
-      "p.content",
-      "p.created_at",
-      "u.id as author_id",
-      "u.name as author_name"
-    )
-    .join({ u: user.tableName }, "p.user_id", "=", "u.id")
-    .where("p.id", id)
-    .first();
-};
-
-const create = async (data) => {
-  const { user_id, title, content } = data;
-
-  return knex(TABLE_NAME)
-    .insert({ user_id, title, content });
-};
-
-module.exports = {
-  getAllWithAuthor,
-  findByIdWithAuthor,
-  create,
-  tableName: TABLE_NAME,
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class post extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      post.belongsTo(models.user, {
+        foreignKey: "user_id",
+        as: "author",
+      });
+    }
+  }
+  post.init(
+    {
+      title: DataTypes.STRING,
+      content: DataTypes.TEXT,
+      user_id: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: "post",
+      createdAt: "created_at",
+      updatedAt: "updated_at",
+    }
+  );
+  return post;
 };

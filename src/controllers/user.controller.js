@@ -1,4 +1,4 @@
-const { getAll: getAllUsers } = require("../models/user");
+const { user: UserModel } = require("../models");
 
 /**
  * @param {import("express").Request} _req
@@ -8,7 +8,9 @@ const { getAll: getAllUsers } = require("../models/user");
 const index = async (_req, res, _next) => {
   return res.send({
     message: "Success",
-    data: await getAllUsers(),
+    data: await UserModel.findAll({
+      attributes: ["id", "name", "email"],
+    }),
   });
 };
 

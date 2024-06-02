@@ -1,7 +1,4 @@
-const {
-  getAllWithAuthor: getAllPostsWithAuthor,
-  findByIdWithAuthor: findPostWithAuthor,
-} = require("../models/post");
+const { post: PostModel } = require("../models");
 
 /**
  * @param {import("express").Request} _req
@@ -9,7 +6,10 @@ const {
  * @param {import("express").NextFunction} _next
  */
 const index = async (_req, res, _next) => {
-  const posts = await getAllPostsWithAuthor();
+  const posts = await PostModel.findAll({
+    attributes: ["id", "title", "content", "created_at"],
+    include: "author",
+  });
 
   return res.send({
     message: "Success",
@@ -18,8 +18,8 @@ const index = async (_req, res, _next) => {
       title: post.title,
       content: post.content,
       author: {
-        id: post.author_id,
-        name: post.author_name,
+        id: post.author.id,
+        name: post.author.name,
       },
       created_at: post.created_at,
     })),
@@ -33,7 +33,10 @@ const index = async (_req, res, _next) => {
  */
 const show = async (req, res, _next) => {
   const { id } = req.params;
-  const post = await findPostWithAuthor(id);
+  const post = await PostModel.findByPk(id, {
+    attributes: ["id", "user_id", "title", "content", "created_at"],
+    include: "author",
+  });
 
   if (!post) {
     return res.status(404).send({
@@ -49,8 +52,8 @@ const show = async (req, res, _next) => {
       title: post.title,
       content: post.content,
       author: {
-        id: post.author_id,
-        name: post.author_name,
+        id: post.author.id,
+        name: post.author.name,
       },
       created_at: post.created_at,
     },
