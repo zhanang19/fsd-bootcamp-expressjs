@@ -4,13 +4,21 @@
   "description": "",
   "scripts": {
     "dev": "nodemon src/index.js  --watch src/ --watch package.json --watch .env",
+    "make:migration": "knex migrate:make --knexfile src/config/database.js",
+    "make:seed": "knex seed:make --knexfile src/config/database.js",
+    "migrate": "knex migrate:latest --knexfile src/config/database.js",
+    "migrate:up": "knex migrate:up --knexfile src/config/database.js",
+    "migrate:down": "knex migrate:down --knexfile src/config/database.js",
+    "seed": "knex seed:run --knexfile src/config/database.js --specific",
     "start": "node src/index.js"
   },
   "author": "zhanang19",
   "license": "MIT",
   "dependencies": {
     "dotenv": "^16.4.5",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "knex": "^3.1.0",
+    "mysql2": "^3.9.8"
   },
   "devDependencies": {
     "nodemon": "^3.1.2"
